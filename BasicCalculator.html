@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .calculator { width: 200px; margin: auto; }
+        .buttons button { width: 45px; height: 45px; margin: 5px; }
+        input { width: 90%; height: 40px; margin-bottom: 10px; text-align: right; }
+    </style>
+</head>
+<body>
+
+    <h1>Basic Calculator</h1>
+    <div class="calculator">
+        <input type="text" id="inputField" readonly />
+        <div id="result"></div>
+        <div class="buttons">
+            <button onclick="appendToInput('7')">7</button>
+            <button onclick="appendToInput('8')">8</button>
+            <button onclick="appendToInput('9')">9</button>
+            <button onclick="appendToInput('/')">/</button><br>
+            <button onclick="appendToInput('4')">4</button>
+            <button onclick="appendToInput('5')">5</button>
+            <button onclick="appendToInput('6')">6</button>
+            <button onclick="appendToInput('*')">*</button><br>
+            <button onclick="appendToInput('1')">1</button>
+            <button onclick="appendToInput('2')">2</button>
+            <button onclick="appendToInput('3')">3</button>
+            <button onclick="appendToInput('-')">-</button><br>
+            <button onclick="appendToInput('0')">0</button>
+            <button onclick="appendToInput('.')">.</button>
+            <button onclick="calculateResult()">=</button>
+            <button onclick="appendToInput('+')">+</button><br>
+            <button onclick="clearInput()">C</button>
+        </div>
+    </div>
+
+    <script>
+        let inputField = document.getElementById("inputField");
+        let resultDiv = document.getElementById("result");
+
+        function appendToInput(value) {
+            inputField.value += value;
+        }
+
+        function clearInput() {
+            inputField.value = "";
+            resultDiv.innerText = "";
+        }
+
+        async function calculateResult() {
+            const expression = inputField.value;
+            try {
+                const response = await fetch("http://localhost:5000/calculate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ expression }),
+                });
+                const data = await response.json();
+                resultDiv.innerText = "Result: " + data.result;
+                alert("Result: " + data.result); // Added pop-up result
+            } catch (error) {
+                resultDiv.innerText = "Error";
+                alert("Error: Unable to calculate!"); // Added pop-up for error
+            }
+        }
+    </script>
+
+</body>
+</html>
